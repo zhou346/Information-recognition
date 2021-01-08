@@ -1,0 +1,25 @@
+certifi==2020.12.5
+cycler==0.10.0
+decorator==4.4.2
+imageio==2.9.0
+kiwisolver @ file:///C:/ci/kiwisolver_1603996595157/work
+matplotlib @ file:///C:/ci/matplotlib-base_1603356257853/work
+mkl-fft==1.2.0
+mkl-random==1.1.1
+mkl-service==2.3.0
+networkx==2.5
+numpy==1.19.5
+olefile==0.46
+opencv-contrib-python==4.5.1.48
+opencv-python==4.5.1.48
+Pillow @ file:///C:/ci/pillow_1609786872067/work
+pyparsing==2.4.7
+pytesseract==0.3.7
+python-dateutil==2.8.1
+PyWavelets==1.1.1
+scikit-image==0.18.1
+scipy==1.6.0
+six @ file:///C:/ci/six_1605205426665/work
+tifffile==2020.12.8
+tornado @ file:///C:/ci/tornado_1606935947090/work
+wincertstore==0.2
