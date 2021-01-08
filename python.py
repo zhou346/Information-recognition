@@ -7,37 +7,11 @@ import skimage.transform as st
 import numpy as np
 import os
 from PIL import Image, ImageOps
-# from torch.autograd import Variable
 import pytesseract
 import shutil
 import cv2 as cv
-# import torch.nn as nn
 import time
 import copy
-# import torchvision
-# import torchvision.transforms as transforms
-# import torch.nn as nn
-# import torch.nn.functional as F
-
-# class Net(nn.Module):  # 定义网络，继承torch.nn.Module
-#     def __init__(self):
-#         super(Net, self).__init__()
-#         self.conv1 = nn.Conv2d(3, 6, 5)  # 卷积层
-#         self.pool = nn.MaxPool2d(2, 2)  # 池化层
-#         self.conv2 = nn.Conv2d(6, 16, 5)  # 卷积层
-#         self.fc1 = nn.Linear(16 * 5 * 5, 120)  # 全连接层
-#         self.fc2 = nn.Linear(120, 84)
-#         self.fc3 = nn.Linear(84, 3817)  # 10个输出?
-
-#     def forward(self, x):  # 前向传播
-#         x = self.pool(F.relu(self.conv1(x)))  # F就是torch.nn.functional
-#         x = self.pool(F.relu(self.conv2(x)))
-#         x = x.view(-1, 16 * 5 * 5)  # .view( )是一个tensor的方法，使得tensor改变size但是元素的总数是不变的。
-#         # 从卷基层到全连接层的维度转换
-#         x = F.relu(self.fc1(x))
-#         x = F.relu(self.fc2(x))
-#         x = self.fc3(x)
-#         return x
 
 def rotate_bound(image, angle):
     # 获取宽高
@@ -155,14 +129,6 @@ def splitImg(imgFilePath, split_pic_path):
     shutil.rmtree(tempDir)
     mkdir(tempDir)
 
-    # img_angle = cv2.imread(imgFilePath)
-    # angle = get_minAreaRect(img_angle)[-1]
-    # # print(angle)
-    # # input()
-    # if abs(90 - angle) > 1 or abs(angle) > 1:
-    #     img_angle = rotate_bound(img_angle, angle)
-    # io.imsave(imgFilePath, img_angle)
-
     # 读取图片，并转灰度图
     img = io.imread(imgFilePath, True)
     # 二值化
@@ -215,8 +181,6 @@ def splitImg(imgFilePath, split_pic_path):
     io.imsave(deskpath+'img_dot.jpg',img_dot)
 
     ########################################################
-    # mkpath=deskpath+'input\\'
-    # mkdir(mkpath)
     # 获取表格顶点位置idx
     idx = np.argwhere(img_dot < 1)
     for n in range(idx.shape[0] - 1):
@@ -365,25 +329,6 @@ def getVProjection(image):
 
 def splitChar(imge):
     img_temp = copy.deepcopy(imge)
-    # imgF = img_as_float(img)
-    # # 求各列的和
-    # col_sum = imgF.sum(axis=0)
-    # idx = np.argwhere(col_sum == col_sum.max())
-    #
-    # images = []
-    # countHere = 0
-    # for i in range(1, len(idx)):
-    #     if idx[i, 0] - idx[i - 1, 0] > 1:
-    #         countHere += 1
-    #         io.imsave(saveDir+str(countHere)+'_' + 'res.png', imgF[:,idx[i-1,0]:idx[i,0] + 1])
-    #         imgHere = img.crop((idx[i - 1, 0], 0, idx[i, 0] + 1, img.height))
-    #
-    #         # io.imsave(saveDir + str(countHere) + '_' + 'res.png', imgHere)
-    #         # imgHere=imgF[:,idx[i-1,0]:idx[i,0]+1]
-    #         # [:,idx[i-1,0]:idx[i,0]+1]
-    #         images.append(imgHere)
-    #
-    # return images
     origineImage = imge
     # 图像灰度化
     # image = cv2.imread('test.jpg',0)
@@ -446,10 +391,6 @@ def splitChar(imge):
 
 
 def my_main(srcFilePath,txtpath,fnameIn,tempdir):
-    # starttime=time.clock()
-
-    # print('标记人民币账户')
-    # tagRMB(srcFilePath,tpl)
 
     print('开始分割单元格')
     # 分割单元格，二值化
@@ -461,58 +402,20 @@ def my_main(srcFilePath,txtpath,fnameIn,tempdir):
         for f in fs:
             filepath=os.path.join(fpath,f)
             focusImg(filepath)
-    # Tesseract-OCR
-    # pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
-    # with open(txtpath, 'w') as ftxt:
-    #     for fpath, fdir, fs in os.walk(tempdir):
-    #         for f in fs:
-    #             filepath = os.path.join(fpath, f)
-    #             fname, fext = os.path.splitext(f)
-    #             img = Image.open(filepath)
-    #             print(fname + ":")
-    #             ftxt.write(fname + ":")
-    #             content = pytesseract.image_to_string(img, lang='chi_sim')
-    #             print(content)
-    #             ftxt.write(content)
-    #         ftxt.write('\n')
-
-
-    model_net = torch.load(r'model\restNet18.pth')
-
-    print('开始分类')
-    with open(txtpath,'w') as ftxt:
-        for fpath,fdir,fs in os.walk(tempdir):
+#     Tesseract-OCR
+    pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
+    with open(txtpath, 'w') as ftxt:
+        for fpath, fdir, fs in os.walk(tempdir):
             for f in fs:
-                filepath=os.path.join(fpath,f)
-                fname,fext=os.path.splitext(f)
-                # img=Image.open(filepath)
-                imge = cv2.imread(filepath)
-
-                ftxt.write(fname+":")
-                # 先分割字符
-                images = splitChar(imge)
-                for i in range(len(images)):
-                    cv2.imshow('binary', images[i])
-                    imgSplit=images[i]
-                    imgSplit = Image.fromarray(cv2.cvtColor(imgSplit,cv2.COLOR_BGR2RGB))
-                    imgSplit = np.array(imgSplit)  # array is a numpy array
-                    imgSplit = imgSplit.resize((32,32))
-                    imgSplit = np.expand_dims(imgSplit, axis=2)
-                    imgSplit = np.concatenate((imgSplit, imgSplit, imgSplit), axis=-1)
-                    #res=softmaxPred(np.array(imgSplit))
-                    imgSplit = Image.fromarray(imgSplit)
-                    res = cnnPred(imgSplit)
-                    res = pytesseract.image_to_string(images[i], lang='chi_sim')
-                    ftxt.write(res)
-                    print("res")
-                    print("file:{0}\nres_small:{1}\n".format(f,res))
-                ftxt.write('\n')
-                else:
-                    phash
-                    res=getText(img,bigPicTempleDic)
-                    ftxt.write(res+'\n')
-                    print("file:{0}\nres_big:{1}\n".format(f,res))
-    print('done\n')
+                filepath = os.path.join(fpath, f)
+                fname, fext = os.path.splitext(f)
+                img = Image.open(filepath)
+                print(fname + ":")
+                ftxt.write(fname + ":")
+                content = pytesseract.image_to_string(img, lang='chi_sim')
+                print(content)
+                ftxt.write(content)
+            ftxt.write('\n')
 
 if __name__ == '__main__':
     saveDir = r'saveDir'
@@ -526,13 +429,5 @@ if __name__ == '__main__':
     fname=r'res'
     deskpath=r'a'
     my_main(tplpath,txtpath,fname,tempDir)
-    # for fpath,fdir,fs in os.walk(tfileDir):
-    #     for f in fs:
-    #         filepath=os.path.join(fpath,f)
-    #         fname=os.path.splitext(f)[0]
-    #         txtpath=os.path.join(res_txtDir,fname+'.txt')
-    #         countf+=1
-    #         print('index:{0},开始做{1}'.format(countf,f))
-    #         my_main(filepath,txtpath,fname,tempDir)
     print('\n跑完了')
 
