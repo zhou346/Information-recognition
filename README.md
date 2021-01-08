@@ -1,0 +1,2 @@
+# Information-recognition
+基于tesseract的车辆合格证的信息识别
