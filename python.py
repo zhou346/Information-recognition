@@ -1,6 +1,5 @@
 import cv2
 import matplotlib as matplotlib
-import torch
 from skimage import io,color,exposure,morphology,transform,img_as_float
 import matplotlib.pyplot as plt
 import skimage.transform as st
